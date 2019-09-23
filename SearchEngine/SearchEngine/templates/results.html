@@ -1,0 +1,81 @@
+<html>
+	<head>
+		<title>TuneSearch Results for {{query}}</title>
+		<link rel="stylesheet" type="text/css" href="/static/searchengine.css" media="screen" />
+    <style>
+    .links {
+      display: inline;
+    }
+    .buttons {
+    display: inline;
+      background-color: #5bb5e5;
+      color: #FFFFFF;
+      padding: 5px 5px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    
+    a.button {
+      background-color: #5bb5e5;
+      color: #FFFFFF;
+      padding: 5px 5px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    
+    </style>
+	</head>
+	<body>
+		<div id="results_top">
+			<div id="logo">
+				<img src="/static/header.png" width=100px height=30px>
+			</div>
+			<div id="searchbar">
+				 <form action="{{ url_for('dosearch') }}" method="GET">
+					<div>
+						<input type="radio" name="query_type" value="or" checked>
+						<label for="or">OR</label>
+						<input type="radio" name="query_type" value="and">
+						<label for="and">AND</label>
+						<input type="text" maxlength=50 size=50 name="query" value="{{query}}"><input type="submit" value="Search">
+						<input type="hidden" name="page_num" value="1">
+					</div>
+				</form>
+			</div>
+		</div>
+
+		{% if results > 0 %}
+			{% if ((pageNum - 1) * 20) + 20 < results %}
+			<p><strong>{{ ((pageNum - 1) * 20) + 1 }} - {{ ((pageNum - 1) * 20) + 20 }} results out of {{ results }} for </strong>{{query}}</p>
+			{% else %}
+			<p><strong>{{ ((pageNum - 1) * 20) + 1 }} - {{ results }} results out of {{ results }} for </strong>{{query}}</p>
+			{% endif %}
+		{% for result in search_results %}
+		<p><strong><a href="http://www.lyricsfreak.com{{ result[2] }}" target="_blank">{{ result[0] }}</a></strong> <em>by</em> {{ result[1] }} </p>
+		{% endfor %}
+		{% else %}
+
+		<p><strong>No results for </strong>{{query}}</p>
+		{% endif %}
+		
+    <div class="links">
+    {% if pageNum > 1 %}
+    <button class="buttons"><a class="button" href="{{ url_for('dosearch', page_num=pageNum - 1,
+                             query=query, query_type=qtype) }}" class="buttons" >
+                       Previous</a></button>
+                       
+    {% endif %}
+    
+    {% if pageNum * 20 < results %}
+    <button class="buttons"><a class="button" href="{{ url_for('dosearch', page_num=pageNum + 1,
+                             query=query, query_type=qtype) }}">
+                       Next</a></button>
+    {% endif %}
+		</div>
+    
+	</body>
+</html>
